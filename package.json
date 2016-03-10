@@ -1,0 +1,29 @@
+{
+  "bin": {
+    "chi-run": "./cli.sh"
+  },
+  "name": "chihuahua-reporters",
+  "version": "1.0.0",
+  "description": "Reporters for Chihuahua",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/csgrimes1/chihuahua-reporters.git"
+  },
+  "keywords": [
+    "Chihuahua",
+    "test"
+  ],
+  "author": "Chris Grimes",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/csgrimes1/chihuahua-reporters/issues"
+  },
+  "homepage": "https://github.com/csgrimes1/chihuahua-reporters#readme",
+  "dependencies": {
+    "chihuahua": "file:///Users/grimescs/hack/chihuahua/.publish"
+  }
+}
