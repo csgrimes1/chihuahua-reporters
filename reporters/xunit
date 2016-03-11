@@ -1,0 +1,75 @@
+#!/usr/bin/env node
+'use strict';
+
+const     util = require('util'),
+    reformatError = function (error) {
+        const keepLines = 4,
+            tab = '    ',
+            stackLines = error.stack.replace('\r', '')
+                .split('\n')
+                //Skip over the message
+                .slice(1),
+            stack = stackLines.slice(0, keepLines)
+                    .map(line => `${tab}${line}`)
+                    .join('\n')
+                + (stackLines.length > keepLines ? `\n${tab}    ...` : '');
+
+        return `      Error: ${error.message}\n${stack}`;
+    };
+
+
+(function report(log) {
+    const logFile = process.argv[process.argv.length - 1],
+        events = require('../src/logreader')(),
+        XMLWriter = require('xml-writer');
+    let count = 0, passed = 0,
+        xw = new XMLWriter(true);
+
+    events.on('SUITE', data => {
+        xw.startDocument();
+        xw.startElement('testsuites');
+    });
+    events.on('AFTER-SUITE', data => {
+        xw.endDocument();
+    });
+    events.on('MODULE', evt => {
+        //<testsuite name="nosetests" tests="1" errors="1" failures="0" skip="0">
+        xw.startElement('testsuite');
+        xw.writeAttribute('name', evt.module);
+    });
+    events.on('AFTER-MODULE', evt => {
+        xw.endElement();
+    });
+    events.on('TEST', evt => {
+        xw.startElement('testcase');
+        xw.writeAttribute('name', evt.testInfo.test);
+    });
+    events.on('AFTER-TEST', evt => {
+        count++;
+        if (evt.passed) {
+            passed++;
+        } else if (evt.passes >= evt.count) {
+            const errorInfo = reformatError(evt.result);
+
+            xw.startElement('failure');
+            xw.text(errorInfo);
+            xw.endElement();
+        }
+
+        xw.endElement();
+    });
+    events.on('ASSERTION', evt => {
+        if (!evt.passed) {
+            const args = util.inspect(evt.args, {level: 4}),
+                prettyArgs = args.substr(1, args.length - 2),
+                errorInfo = `      Assertion ${JSON.stringify(evt.assertionFunction)}(${prettyArgs}) failed`;
+
+            xw.startElement('failure');
+            xw.text(errorInfo);
+            xw.endElement();
+        }
+    });
+
+    events.readLog(logFile);
+    console.log(xw.toString());
+})();

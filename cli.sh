@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+LINK=$(readlink $0)
+if [ "$LINK" != "" ]; then
+    LINKDIR=$(cd $(dirname $0) && pwd)
+    PROGRAM="$LINKDIR/$LINK"
+else
+    PROGRAM=$0
+fi
+MYDIR=$(cd $(dirname $PROGRAM) && pwd)
+
 #cli testdir pattern reportdir REPORTERS
 if [ $# -lt 3 ]; then
     echo "$(basename $0) TESTDIR PATTERN REPORTDIR [REPORTERS]" >&2
@@ -8,9 +17,10 @@ if [ $# -lt 3 ]; then
     exit 1
 fi
 
-TESTDIR="$1"
+PROJECTDIR=$(cd $(npm bin)/../..  && pwd)
+TESTDIR="$PROJECTDIR/$1"
 PATTERN="$2"
-REPORTDIR="$3"
+REPORTDIR="$PROJECTDIR/$3"
 shift
 shift
 shift
@@ -68,6 +78,12 @@ mkdir -p "$REPORTDIR"
 find "$TESTDIR" -name $PATTERN \
     | $CMD $CHIRUN "--output-dir=$REPORTDIR" "$DEFRPTOPT"
 
+RC=$?
+
+if [ $RC == 126 ]; then
+    exit $RC
+fi
+
 #If we ran NYC
 if [ "$CMD" != "node" ]; then
     $CMD report > "$REPORTDIR/coverage.txt"
@@ -76,5 +92,14 @@ fi
 
 for var in "${REPORTERS[@]}"
 do
-    modules/$var > "$REPORTDIR/${var}.txt"
+    #If it starts with +, then print it to the console.
+    if [ ${var:0:1} == "+" ]; then
+        REPORTER=${var:1}
+        $MYDIR/reporters/$REPORTER "$REPORTDIR/testresults.json"
+    else
+        REPORTER=$var
+    fi
+    $MYDIR/reporters/$REPORTER "$REPORTDIR/testresults.json" &> "$REPORTDIR/${REPORTER}.txt"
 done
+
+exit $RC
