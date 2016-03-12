@@ -12,4 +12,4 @@ cp $PROJDIR/cli.sh $PUBDIR/
 cp -r $PROJDIR/src $PUBDIR/
 cp -r $PROJDIR/reporters $PUBDIR/
 
-#npm publish $PUBDIR
+npm publish $PUBDIR

@@ -4,7 +4,10 @@ results can be consumed by build servers.
 
 ### Installation
 
+You'll need `chihuahua-tester` in order to use this module.
+
 ```
+npm install chihuahua-tester --save-dev
 npm install chihuahua-reporters --save-dev
 ```
 
@@ -30,7 +33,7 @@ The parameters to `chi-run` are:
 
 The library uses NYC for coverage. If you want to exclude your test files
 from coverage checks, you will need to edit your package.json. Adding something
-like the following will exclude your test files.
+like the following will exclude your test files:
 
 ```
   "nyc": {
@@ -38,4 +41,14 @@ like the following will exclude your test files.
       "src/**/*"
     ]
   }
+```
+
+The module can use NYC if you install it to your project or globally. If you
+install it globally, this helps keep your project dependency tree smaller. It
+presents a problem if you need to consume coverage in your build process. The
+simple way to address this is to add the following line to a script task near
+the start of your build process:
+
+```
+npm install nyc
 ```
