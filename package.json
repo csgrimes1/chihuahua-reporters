@@ -3,7 +3,7 @@
     "chi-run": "./cli.sh"
   },
   "name": "chihuahua-reporters",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Reporters for Chihuahua",
   "main": "index.js",
   "scripts": {
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/csgrimes1/chihuahua-reporters#readme",
   "dependencies": {
-    "chihuahua-tester": "1.0.0",
+    "chihuahua-tester": "^1.0.0",
     "eventemitter3": "1.1.1",
     "lodash": "4.6.1",
     "xml-writer": "1.6.0"
