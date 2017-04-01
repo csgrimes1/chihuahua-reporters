@@ -73,3 +73,8 @@ const     util = require('util'),
     events.readLog(logFile);
     console.log(xw.toString());
 })();
+
+process.on('uncaughtException', (err) => {
+    console.error(`Caught exception: ${err}`);
+    process.exit(1);
+});

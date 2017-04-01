@@ -1,4 +1,4 @@
-# chihuahua-reporters
+# chihuahua-reporters  [![Build Status](https://travis-ci.org/csgrimes1/chihuahua-reporters.svg?branch=master)](https://travis-ci.org/csgrimes1/chihuahua-reporters)
 Reporters for the Chihuahua test runner. The library supports XUnit so test
 results can be consumed by build servers.
 

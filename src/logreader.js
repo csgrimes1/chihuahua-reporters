@@ -11,6 +11,17 @@ module.exports = function () {
                 passes: _.filter(nodes, node => node.passed).length
             };
         },
+        makeArray = (arrayLike) => {
+            return arrayLike
+                ?   Array.from(
+                        (function *() {
+                            for (const k in arrayLike) {
+                                yield arrayLike[k];
+                            }
+                        })()
+                    )
+                : [];
+        },
         dumpLogs = function (node) {
             const rollup = _.isArray(node.children)
                     ? makePassFailRollup(node.children)
@@ -18,12 +29,11 @@ module.exports = function () {
                 eventData = _.chain(node)
                     .omit('children')
                     .merge(rollup)
-                    .value();
+                    .value(),
+                children = makeArray(node.children);
 
             events.emit(node.summaryFor, eventData);
-            if (node.children) {
-                node.children.forEach(dumpLogs);
-            }
+            children.forEach(dumpLogs);
             events.emit(`AFTER-${node.summaryFor}`, eventData);
         };
 

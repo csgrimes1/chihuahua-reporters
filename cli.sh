@@ -80,14 +80,18 @@ find "$TESTDIR" -name $PATTERN \
 
 RC=$?
 
+
 if [ $RC == 126 ]; then
     exit $RC
 fi
 
+TOKENS=( $CMD )
+NODECMD="${TOKENS[0]}"
+NODECMDNAME=$(basename "$NODECMD")
+
 #If we ran NYC
-if [ "$CMD" != "node" ]; then
-    $CMD report > "$REPORTDIR/coverage.txt"
-    $CMD report
+if [ "$NODECMDNAME" = "nyc" ]; then
+    $NODECMD report
 fi
 
 for var in "${REPORTERS[@]}"
@@ -98,8 +102,10 @@ do
         $MYDIR/reporters/$REPORTER "$REPORTDIR/testresults.json"
     else
         REPORTER=$var
+        set -e
+        $MYDIR/reporters/$REPORTER "$REPORTDIR/testresults.json" > /dev/null
+        $MYDIR/reporters/$REPORTER "$REPORTDIR/testresults.json" > "$REPORTDIR/${REPORTER}.txt"
     fi
-    $MYDIR/reporters/$REPORTER "$REPORTDIR/testresults.json" &> "$REPORTDIR/${REPORTER}.txt"
 done
 
 exit $RC
