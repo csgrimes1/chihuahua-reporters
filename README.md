@@ -52,3 +52,8 @@ the start of your build process:
 ```
 npm install nyc
 ```
+
+### History
+
+* Version 2.0.2 2017-04-01: Fixed creation of an unwanted directory call " during
+NYC run.
